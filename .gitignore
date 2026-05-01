@@ -1,4 +1,12 @@
-node_modules/
+# Ignore dependencies for both subfolders
+client/node_modules/
+server/node_modules/
+
+# Ignore environment variables
 .env
-build/
-.DS_Store
+server/.env
+client/.env
+
+# Ignore build files
+client/dist/
+client/build/
