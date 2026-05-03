@@ -80,6 +80,16 @@ app.post("/api/archive", async (req, res) => {
   }
 });
 
+app.get("/api/archive", async (req, res) => {
+  try {
+    const archivedSongs = await Song.find().sort({ dateAdded: -1 });
+    res.json(archivedSongs);
+  } catch (error) {
+    console.error("Error fetching archive:", error);
+    res.status(500).send("Failed to load archive");
+  }
+});
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to the AudioArchive Database!"))
