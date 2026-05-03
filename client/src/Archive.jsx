@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import './Archive.css'
 
 function Archive() {
   const [savedSongs, setSavedSongs] = useState([]);
@@ -139,14 +140,14 @@ function Archive() {
         {displayedSongs.map((song) => (
           <div key={song.videoId} className="archive-row">
 
-            {/* Left side: song information */}
+            {/* Left Side: Song Information */}
             <div className="song-info">
               <img src={song.thumbnail} alt={song.title} />
-              <div>
-                {/* Needed to render quotes */}
+              <div className="song-details"> 
+                {/* Needed to render HTML entities like quotes in the title */}
                 <h3 dangerouslySetInnerHTML={{ __html: song.title }}></h3>
                 <p>{song.channelTitle}</p>
-                <button
+                <button 
                   className="remove-song-btn"
                   onClick={() => handleRemoveSong(song.videoId)}
                 >

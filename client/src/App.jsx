@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import Archive from './Archive';
-import './App.css';
 
 function App() {
   return (
@@ -13,7 +12,5 @@ function App() {
     </Router>
   );
 }
-
-
 
 export default App;
