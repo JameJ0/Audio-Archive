@@ -90,6 +90,41 @@ app.get("/api/archive", async (req, res) => {
   }
 });
 
+app.put("/api/archive/:videoId/tags", async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const { tag } = req.body;
+    const updatedSong = await Song.findOneAndUpdate(
+      { videoId: videoId },
+      { $push: { tags: tag } },
+      { new: true },
+    );
+    res.json(updatedSong);
+  } catch (error) {
+    console.error("Error adding tag:", error);
+    res.status(500).send("Failed to add tag");
+  }
+});
+
+// Remove a tag from a specific archived song
+app.delete("/api/archive/:videoId/tags/:tag", async (req, res) => {
+  try {
+    const { videoId, tag } = req.params;
+
+    // findOneAndUpdate with $pull removes the specific tag from the array
+    const updatedSong = await Song.findOneAndUpdate(
+      { videoId: videoId },
+      { $pull: { tags: tag } },
+      { new: true }
+    );
+
+    res.json(updatedSong);
+  } catch (error) {
+    console.error("Error removing tag:", error);
+    res.status(500).send("Failed to remove tag");
+  }
+});
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to the AudioArchive Database!"))
