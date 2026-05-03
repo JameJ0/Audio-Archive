@@ -1,4 +1,4 @@
-/* all the classes provided by the setup */
+/* All the rules provided by the setup */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -184,7 +184,7 @@
   }
 }
 
-/* custom classes */
+/* custom rules */
 
 /* Container for the vertical list of songs */
 .archive-list {
@@ -197,9 +197,9 @@
 /* The layout for each individual row */
 .archive-row {
   display: flex;
-  justify-content: space-between; /* Pushes song info left and tags right */
+  justify-content: space-between;
   align-items: center;
-  background-color: #2a2a35; /* Dark background for the card */
+  background-color: #2a2a35;
   padding: 15px;
   border-radius: 8px;
   border: 1px solid #3d3d4e;
@@ -213,6 +213,7 @@
   max-width: 60%;
 }
 
+/* The song thumbnail */
 .song-info img {
   width: 140px;
   border-radius: 6px;
@@ -222,42 +223,45 @@
 .tag-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Aligns the button and text to the right edge */
+  align-items: flex-end; 
   gap: 15px;
 }
 
-/* The little pill-shaped tags */
+/* Container holding the row of pill-shaped tags */
 .tags-display {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
+/* The tag chip */
 .tag-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px; /* Space between the word and the 'x' */
+  gap: 6px; 
   background-color: #646cff; 
   color: white;
   padding: 5px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: bold;
-  transition: padding 0.2s ease-in-out; /* Smooth transition */
+  transition: padding 0.2s ease-in-out; 
 }
 
+/* The no tags message */
 .no-tags {
   color: #888;
   font-style: italic;
   font-size: 0.9rem;
 }
 
-/* The input box that appears when adding a tag */
+/* Styling for the container holding the tag input */
 .tag-input-box {
   display: flex;
   gap: 5px;
 }
 
+/* The input box that appears when adding a tag */
 .tag-input-box input {
   padding: 5px;
   border-radius: 4px;
@@ -266,13 +270,14 @@
   color: white;
 }
 
+/* The button to remove a tag */
 .remove-tag-btn {
-  display: none; /* Invisible normally */
+  display: none; 
   cursor: pointer;
   font-weight: bold;
   font-size: 1.1rem;
   line-height: 0.5;
-  color: #ffb3b3; /* A soft red color */
+  color: #ffb3b3; 
   transition: color 0.2s;
 }
 
@@ -281,6 +286,96 @@
   color: #ff3333; 
 }
 
+/* Show the remove button when hovering over the tag */
 .tag-chip:hover .remove-tag-btn {
   display: inline-block;
+}
+
+/* Container for the input box and the cloud below it */
+.tag-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+/* The cloud layout */
+.suggested-tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  max-width: 300px; 
+}
+
+/* The suggested label format */
+.suggested-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-right: 4px;
+  align-self: center;
+}
+
+/* The suggested tags (outlined style) */
+.suggested-tag-chip {
+  background-color: transparent;
+  color: #8892ff;
+  border: 1px solid #8892ff;
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect: fills in the color */
+.suggested-tag-chip:hover {
+  background-color: #8892ff;
+  color: white;
+}
+
+/* The Delete Song Button */
+.remove-song-btn {
+  margin-top: 10px;
+  background-color: transparent;
+  color: #ff4d4d;
+  border: 1px solid #ff4d4d;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect for the delete button */
+.remove-song-btn:hover {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+/* Container for the filter bar */
+.archive-controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* The filter input box */
+.filter-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  background-color: #1a1a24;
+  border: 1px solid #3d3d4e;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+  padding: 10px 30px 10px 15px;
+}
+
+/* Focus state */
+.filter-bar:focus {
+  outline: none;
+  border-color: #646cff; 
 }

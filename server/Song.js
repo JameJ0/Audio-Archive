@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Schema for the Song object to store in the database
 const songSchema = new mongoose.Schema({
   videoId: { type: String, required: true, unique: true },
   title: String,

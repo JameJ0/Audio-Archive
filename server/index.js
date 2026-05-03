@@ -9,12 +9,11 @@ const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
-
 app.get("/", (req, res) => {
   res.send("AudioArchive Server is running!");
 });
 
-/*
+// Test page
 app.get("/test-youtube", async (req, res) => {
   try {
     const youtube = google.youtube({
@@ -32,8 +31,8 @@ app.get("/test-youtube", async (req, res) => {
     res.status(500).send("Error connecting to YouTube");
   }
 });
-*/
 
+// Search function
 app.get("/api/search", async (req, res) => {
   try {
     const { query } = req.query;
@@ -58,6 +57,7 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
+// Song archive function
 app.post("/api/archive", async (req, res) => {
   try {
     const { videoId, title, thumbnail, channelTitle } = req.body;
@@ -80,6 +80,7 @@ app.post("/api/archive", async (req, res) => {
   }
 });
 
+// Get archived songs
 app.get("/api/archive", async (req, res) => {
   try {
     const archivedSongs = await Song.find().sort({ dateAdded: -1 });
@@ -90,6 +91,7 @@ app.get("/api/archive", async (req, res) => {
   }
 });
 
+// Update song tags
 app.put("/api/archive/:videoId/tags", async (req, res) => {
   try {
     const { videoId } = req.params;
@@ -110,14 +112,11 @@ app.put("/api/archive/:videoId/tags", async (req, res) => {
 app.delete("/api/archive/:videoId/tags/:tag", async (req, res) => {
   try {
     const { videoId, tag } = req.params;
-
-    // findOneAndUpdate with $pull removes the specific tag from the array
     const updatedSong = await Song.findOneAndUpdate(
       { videoId: videoId },
       { $pull: { tags: tag } },
-      { new: true }
+      { new: true },
     );
-
     res.json(updatedSong);
   } catch (error) {
     console.error("Error removing tag:", error);
@@ -125,11 +124,28 @@ app.delete("/api/archive/:videoId/tags/:tag", async (req, res) => {
   }
 });
 
+// Delete an entire song from the archive
+app.delete("/api/archive/:videoId", async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const deletedSong = await Song.findOneAndDelete({ videoId: videoId });
+    if (!deletedSong) {
+      return res.status(404).send("Song not found");
+    }
+    res.status(200).json({ message: "Song removed successfully" });
+  } catch (error) {
+    console.error("Error deleting song:", error);
+    res.status(500).send("Failed to delete song");
+  }
+});
+
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to the AudioArchive Database!"))
   .catch((err) => console.error("Database connection error:", err));
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is humming along on http://localhost:${PORT}`);
 });

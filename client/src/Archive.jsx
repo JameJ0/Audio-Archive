@@ -5,7 +5,9 @@ function Archive() {
   const [savedSongs, setSavedSongs] = useState([]);
   const [activeInputId, setActiveInputId] = useState(null);
   const [newTag, setNewTag] = useState("");
+  const [filterText, setFilterText] = useState("");
 
+  // On component mount, fetch the user's saved songs from the backend API and store them in state.
   useEffect(() => {
     const fetchArchive = async () => {
       const response = await fetch("http://localhost:5000/api/archive");
@@ -15,14 +17,15 @@ function Archive() {
     fetchArchive();
   }, []);
 
-  const handleAddTag = async (videoId) => {
-    if (!newTag.trim()) return;
+  // Handler for adding a tag to a specific song
+  const handleAddTag = async (videoId, tagToSave = newTag) => {
+    if (!tagToSave.trim()) return;
     const response = await fetch(
       `http://localhost:5000/api/archive/${videoId}/tags`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag: newTag.trim() }),
+        body: JSON.stringify({ tag: tagToSave.trim() }),
       },
     );
     if (response.ok) {
@@ -37,26 +40,22 @@ function Archive() {
     }
   };
 
+  // Handler for removing a tag from a song
   const handleRemoveTag = async (videoId, tagToRemove) => {
-    // Optional: Ask for confirmation before deleting
     if (
       !window.confirm(
         `Are you sure you want to remove the tag "${tagToRemove}"?`,
       )
     )
       return;
-
     const response = await fetch(
       `http://localhost:5000/api/archive/${videoId}/tags/${encodeURIComponent(tagToRemove)}`,
       {
         method: "DELETE",
       },
     );
-
     if (response.ok) {
       const updatedSong = await response.json();
-
-      // Update the UI immediately
       setSavedSongs(
         savedSongs.map((song) =>
           song.videoId === videoId ? updatedSong : song,
@@ -65,6 +64,45 @@ function Archive() {
     }
   };
 
+  // Handler for removing a song from the archive
+  const handleRemoveSong = async (videoId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to permanently delete this song from your archive?",
+      )
+    )
+      return;
+
+    const response = await fetch(
+      `http://localhost:5000/api/archive/${videoId}`,
+      {
+        method: "DELETE",
+      },
+    );
+    if (response.ok) {
+      setSavedSongs(savedSongs.filter((song) => song.videoId !== videoId));
+      setActiveInputId(null);
+    }
+  };
+
+  // If the filter bar is empty, show all songs.
+  // Otherwise, only show songs that have a tag matching the typed text.
+  const displayedSongs = savedSongs.filter((song) => {
+    if (filterText.trim() === "") return true;
+    const matchesTag =
+      song.tags &&
+      song.tags.some((tag) =>
+        tag.toLowerCase().includes(filterText.toLowerCase()),
+      );
+    return matchesTag;
+  });
+
+  // Get all unique tags from the saved songs
+  const allUniqueTags = [
+    ...new Set(savedSongs.flatMap((song) => song.tags || [])),
+  ];
+
+  // Render the component
   return (
     <div className="Archive">
       <nav
@@ -77,33 +115,58 @@ function Archive() {
         <h1>AudioArchive</h1>
         <Link to="/">Back to Search</Link>
       </nav>
-
       <h2>My Saved Songs</h2>
 
+      {/* Search songs by tags */}
+      <div className="archive-controls">
+        <input
+          type="text"
+          list="tag-suggestions"
+          className="filter-bar"
+          placeholder="Filter by tags (e.g. Rhythm)..."
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+        />
+        <datalist id="tag-suggestions">
+          {allUniqueTags.map((tag, index) => (
+            <option key={index} value={tag} />
+          ))}
+        </datalist>
+      </div>
+
+      {/* Songs list */}
       <div className="archive-list">
-        {savedSongs.map((song) => (
+        {displayedSongs.map((song) => (
           <div key={song.videoId} className="archive-row">
-            {/*left side*/}
+
+            {/* Left side: song information */}
             <div className="song-info">
               <img src={song.thumbnail} alt={song.title} />
               <div>
+                {/* Needed to render quotes */}
                 <h3 dangerouslySetInnerHTML={{ __html: song.title }}></h3>
                 <p>{song.channelTitle}</p>
+                <button
+                  className="remove-song-btn"
+                  onClick={() => handleRemoveSong(song.videoId)}
+                >
+                  Delete Track
+                </button>
               </div>
             </div>
-            {/*right side*/}
+
+            {/* Right side: tags */}
             <div className="tag-section">
               <div className="tags-display">
                 {song.tags && song.tags.length > 0 ? (
                   song.tags.map((tag, index) => (
                     <span key={index} className="tag-chip">
                       {tag}
-                      {/* ADD THE onClick HERE */}
                       <span
                         className="remove-tag-btn"
                         onClick={() => handleRemoveTag(song.videoId, tag)}
                       >
-                        ×
+                        x
                       </span>
                     </span>
                   ))
@@ -111,19 +174,48 @@ function Archive() {
                   <span className="no-tags">No tags</span>
                 )}
               </div>
+              {/* Toggle between the "+ Add Tag" button and the input field */}
               {activeInputId === song.videoId ? (
-                <div className="tag-input-box">
-                  <input
-                    type="text"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="e.g. Rhythm, Cover"
-                    autoFocus
-                  />
-                  <button onClick={() => handleAddTag(song.videoId)}>
-                    Save
-                  </button>
-                  <button onClick={() => setActiveInputId(null)}>Cancel</button>
+                <div className="tag-input-container">
+                  <div className="tag-input-box">
+                    <input
+                      type="text"
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      placeholder="e.g. Rhythm, Cover"
+                      autoFocus
+                    />
+                    <button onClick={() => handleAddTag(song.videoId, newTag)}>
+                      Save
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveInputId(null);
+                        setNewTag("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {/* Shows the row of existing tags */}
+                  {allUniqueTags.length > 0 && (
+                    <div className="suggested-tags-cloud">
+                      <span className="suggested-label">Suggested:</span>
+                      {allUniqueTags
+                        .filter((tag) => !(song.tags || []).includes(tag))
+                        .map((tag, index) => (
+                          <span
+                            key={index}
+                            className="suggested-tag-chip"
+                            onClick={() => handleAddTag(song.videoId, tag)}
+                          >
+                            + {tag}
+                          </span>
+                        ))}
+                    </div>
+                  )}
+                  
                 </div>
               ) : (
                 <button onClick={() => setActiveInputId(song.videoId)}>
@@ -131,6 +223,7 @@ function Archive() {
                 </button>
               )}
             </div>
+
           </div>
         ))}
       </div>
