@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 function Home() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+
+  // Search handler
   const handleSearch = async (e) => {
     e.preventDefault();
     const response = await fetch(
@@ -13,6 +15,7 @@ function Home() {
     setResults(data);
   };
 
+  // Archiving handler
   const archiveSong = async (song) => {
     const response = await fetch("http://localhost:5000/api/archive", {
       method: "POST",
@@ -31,6 +34,7 @@ function Home() {
     }
   };
 
+  // Render the component
   return (
     <div className="Home">
       <nav
@@ -43,6 +47,8 @@ function Home() {
         <h1>AudioArchive</h1>
         <Link to="/archive">View Archive</Link>
       </nav>
+
+      {/* Submit the search query when user presses enter */}
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -53,6 +59,7 @@ function Home() {
         <button type="submit">Search</button>
       </form>
 
+      {/* The mapping loop to display search results */}
       <div className="results-grid">
         {results.map((song) => (
           <div key={song.id.videoId} className="song-card">

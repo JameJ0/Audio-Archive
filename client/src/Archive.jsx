@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import './Archive.css'
+import "./Archive.css";
 
 function Archive() {
   const [savedSongs, setSavedSongs] = useState([]);
   const [activeInputId, setActiveInputId] = useState(null);
   const [newTag, setNewTag] = useState("");
   const [filterText, setFilterText] = useState("");
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
 
   // On component mount, fetch the user's saved songs from the backend API and store them in state.
   useEffect(() => {
@@ -118,6 +119,26 @@ function Archive() {
       </nav>
       <h2>My Saved Songs</h2>
 
+      {/* YouTube Embedded Player (Theater Mode) */}
+      {selectedVideoId && (
+        <div className="video-player-container">
+          <button
+            className="close-player"
+            onClick={() => setSelectedVideoId(null)}
+          >
+            x Close Player
+          </button>
+          <iframe
+            width="100%"
+            height="450"
+            src={`https://www.youtube.com/embed/${selectedVideoId}?autoplay=1`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
+
       {/* Search songs by tags */}
       <div className="archive-controls">
         <input
@@ -142,12 +163,29 @@ function Archive() {
 
             {/* Left Side: Song Information */}
             <div className="song-info">
-              <img src={song.thumbnail} alt={song.title} />
-              <div className="song-details"> 
-                {/* Needed to render HTML entities like quotes in the title */}
-                <h3 dangerouslySetInnerHTML={{ __html: song.title }}></h3>
+
+              {/* Clicking the video thumbnail sets the ID and scrolls to top */}
+              <img
+                src={song.thumbnail}
+                alt={song.title}
+                onClick={() => {
+                  setSelectedVideoId(song.videoId);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                style={{ cursor: "pointer" }}
+              />
+
+              <div className="song-details">
+                <h3
+                  dangerouslySetInnerHTML={{ __html: song.title }}
+                  onClick={() => {
+                    setSelectedVideoId(song.videoId);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  style={{ cursor: "pointer" }}
+                ></h3>
                 <p>{song.channelTitle}</p>
-                <button 
+                <button
                   className="remove-song-btn"
                   onClick={() => handleRemoveSong(song.videoId)}
                 >
@@ -175,6 +213,7 @@ function Archive() {
                   <span className="no-tags">No tags</span>
                 )}
               </div>
+
               {/* Toggle between the "+ Add Tag" button and the input field */}
               {activeInputId === song.videoId ? (
                 <div className="tag-input-container">
@@ -224,7 +263,6 @@ function Archive() {
                 </button>
               )}
             </div>
-
           </div>
         ))}
       </div>
