@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.send("AudioArchive Server is running!");
 });
 
-// Search function using YoutubeAPI
+// Search function using Youtube API
 app.get("/api/search", async (req, res) => {
   try {
     const { query } = req.query;
