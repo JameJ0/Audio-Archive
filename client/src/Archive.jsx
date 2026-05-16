@@ -12,7 +12,7 @@ function Archive() {
   // On component mount, fetch the user's saved songs from the backend API and store them in state.
   useEffect(() => {
     const fetchArchive = async () => {
-      const response = await fetch("http://localhost:5000/api/archive");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}`);
       const data = await response.json();
       setSavedSongs(data);
     };
@@ -23,7 +23,7 @@ function Archive() {
   const handleAddTag = async (videoId, tagToSave = newTag) => {
     if (!tagToSave.trim()) return;
     const response = await fetch(
-      `http://localhost:5000/api/archive/${videoId}/tags`,
+      `${import.meta.env.VITE_API_URL}/api/archive/${videoId}/tags`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ function Archive() {
     )
       return;
     const response = await fetch(
-      `http://localhost:5000/api/archive/${videoId}/tags/${encodeURIComponent(tagToRemove)}`,
+      `${import.meta.env.VITE_API_URL}/api/archive/${videoId}/tags/${encodeURIComponent(tagToRemove)}`,
       {
         method: "DELETE",
       },
@@ -76,7 +76,7 @@ function Archive() {
       return;
 
     const response = await fetch(
-      `http://localhost:5000/api/archive/${videoId}`,
+      `${import.meta.env.VITE_API_URL}/api/archive/${videoId}`,
       {
         method: "DELETE",
       },

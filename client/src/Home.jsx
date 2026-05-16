@@ -9,7 +9,7 @@ function Home() {
   const handleSearch = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      `http://localhost:5000/api/search?query=${query}`,
+      `${import.meta.env.VITE_API_URL}/api/search?query=${query}`,
     );
     const data = await response.json();
     setResults(data);
@@ -17,7 +17,7 @@ function Home() {
 
   // Archiving handler
   const archiveSong = async (song) => {
-    const response = await fetch("http://localhost:5000/api/archive", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/archive`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
