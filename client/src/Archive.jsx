@@ -12,7 +12,7 @@ function Archive() {
   // On component mount, fetch the user's saved songs from the backend API and store them in state.
   useEffect(() => {
     const fetchArchive = async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/archive`);
       const data = await response.json();
       setSavedSongs(data);
     };
