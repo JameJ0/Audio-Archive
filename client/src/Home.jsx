@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import GettingStarted from "./GettingStarted";
 
 function Home() {
   const [query, setQuery] = useState("");
@@ -47,6 +48,8 @@ function Home() {
         <h1>AudioArchive</h1>
         <Link to="/archive">View Archive</Link>
       </nav>
+
+      <GettingStarted />
 
       {/* Submit the search query when user presses enter */}
       <form onSubmit={handleSearch}>
